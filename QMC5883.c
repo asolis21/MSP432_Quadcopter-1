@@ -51,15 +51,23 @@ void QMC5883_set_range(uint8_t range)
     QMC5883_write_byte(QMC5883_REG_CONFIG_2, range << 4);
 }
 
-void QMC5883_raw_magnetometer(int16_t *mag)
+void QMC5883_raw_magnetometer(int16_t *raw_mag)
 {
     uint8_t raw_data[6];
     i2c_dev_read(QMC5883_ADDRESS, QMC5883_REG_OUT_X_L, raw_data, 6);
 
-    mag[0] = ((int16_t)(raw_data[1] << 8)) | raw_data[0];
-    mag[1] = ((int16_t)(raw_data[3] << 8)) | raw_data[2];
-    mag[2] = ((int16_t)(raw_data[5] << 8)) | raw_data[4];
+    raw_mag[0] = ((int16_t)(raw_data[1] << 8)) | raw_data[0];
+    raw_mag[1] = ((int16_t)(raw_data[3] << 8)) | raw_data[2];
+    raw_mag[2] = ((int16_t)(raw_data[5] << 8)) | raw_data[4];
 }
+
+void QMC5883_ScaleRaw_magnetometer(float *mag, int16_t *raw_mag)
+{
+    mag[0] = (float)raw_mag[0]/3000.0f;
+    mag[1] = (float)raw_mag[1]/3000.0f;
+    mag[2] = (float)raw_mag[2]/3000.0f;
+}
+
 
 /*LOW LEVEL QMC5883 COMMUNICATION-----------------------------------------------------*/
 

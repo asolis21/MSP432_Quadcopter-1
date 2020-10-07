@@ -13,6 +13,6 @@
 	<ignoreDefaultDeviceSettings value="true"/>
 	<ignoreDefaultCCSSettings value="true"/>
 	<templateProperties value="id=empty_MSP_EXP432P401R_freertos_ccs.projectspec.empty_MSP_EXP432P401R_freertos_ccs,buildProfile=release,isHybrid=true"/>
-	<origin value="C:\ti\simplelink_msp432p4_sdk_3_40_01_02\examples\rtos\MSP_EXP432P401R\drivers\empty\freertos\ccs\empty_MSP_EXP432P401R_freertos_ccs.projectspec"/>
+	<origin value="C:/Users/Alex/workspace_v10/MSP432_Quadcopter-1"/>
 	<filesToOpen value=""/>
 </projectOptions>

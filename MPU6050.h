@@ -393,7 +393,10 @@ void MPU6050_sleep(bool sleep);
 void MPU6050_reset(void);
 uint8_t MPU6050_who(void);
 void MPU6050_raw_temperature(int16_t *temp);
-void MPU6050_raw_accelerometer(int16_t *accel);
-void MPU6050_raw_gyroscope(int16_t *gyro);
+void MPU6050_raw_accelerometer(int16_t *raw_accel);
+void MPU6050_raw_gyroscope(int16_t *raw_gyro);
+void MPU6050_ScaleRaw_accelerometer(float *accel, int16_t *raw_accel);
+void MPU6050_ScaleRaw_gyroscope(float *gyro, int16_t *raw_gyro, float *gyro_bias);
+void MPU6050_bias_gyroscope(float *gyro_bias, int16_t *raw_gyro);
 
 #endif /* MPU6050_H_ */

@@ -79,25 +79,50 @@ void MPU6050_raw_temperature(int16_t *temp)
     *temp = (((int16_t)raw_data[0]) << 8) | raw_data[1];
 }
 
-void MPU6050_raw_accelerometer(int16_t *accel)
+void MPU6050_raw_accelerometer(int16_t *raw_accel)
 {
     uint8_t raw_data[6];
     i2c_dev_read(MPU6050_address, MPU6050_RA_ACCEL_XOUT_H, raw_data, 6);
 
-    accel[0] = ((int16_t)raw_data[0] << 8) | raw_data[1];
-    accel[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
-    accel[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
+    raw_accel[0] = ((int16_t)raw_data[0] << 8) | raw_data[1];
+    raw_accel[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
+    raw_accel[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
+}
+void MPU6050_ScaleRaw_accelerometer(float *accel, int16_t *raw_accel)
+{
+    accel[0] = (float)raw_accel[0]/16384.0f;
+    accel[1] = (float)raw_accel[1]/16384.0f;
+    accel[2] = (float)raw_accel[2]/16384.0f;
 }
 
-void MPU6050_raw_gyroscope(int16_t *gyro)
+
+void MPU6050_raw_gyroscope(int16_t *raw_gyro)
 {
     uint8_t raw_data[6];
     i2c_dev_read(MPU6050_address, MPU6050_RA_GYRO_XOUT_H, raw_data, 6);
 
-    gyro[0] = ((int16_t)raw_data[0] << 8) | raw_data[1];
-    gyro[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
-    gyro[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
+    raw_gyro[0] = ((int16_t)raw_data[0] << 8) | raw_data[1];
+    raw_gyro[1] = ((int16_t)raw_data[2] << 8) | raw_data[3];
+    raw_gyro[2] = ((int16_t)raw_data[4] << 8) | raw_data[5];
 }
+
+void MPU6050_bias_gyroscope(float *gyro_bias, int16_t *raw_gyro)
+{
+
+    gyro_bias[0] += (float)raw_gyro[0]/151.0f;
+    gyro_bias[1] += (float)raw_gyro[1]/151.0f;
+    gyro_bias[2] += (float)raw_gyro[2]/151.0f;
+}
+
+void MPU6050_ScaleRaw_gyroscope(float *gyro, int16_t *raw_gyro, float *gyro_bias)
+{
+    gyro[0] = ((float)raw_gyro[0]/151.0f) - gyro_bias[0];
+    gyro[1] = ((float)raw_gyro[1]/151.0f) - gyro_bias[1];
+    gyro[2] = ((float)raw_gyro[2]/151.0f) - gyro_bias[2];
+}
+
+
+
 
 /*LOW LEVEL MPU6050 COMMUNICATION--------------------------------------------------*/
 void MPU6050_write_byte(uint8_t reg, uint8_t value)
