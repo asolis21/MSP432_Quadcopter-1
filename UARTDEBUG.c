@@ -6,12 +6,12 @@
 
 void UARTDEBUG_init(uint32_t baudrate)
 {
-    uart_dev_init(UART0, baudrate);
+    uart_dev_init(UART1, baudrate);
 }
 
 void PrintChar(char c)
 {
-    uart_dev_write(UART0, (uint8_t*)&c, 1);
+    uart_dev_write(UART1, (uint8_t*)&c, 1);
 }
 
 void PrintString(char *string)

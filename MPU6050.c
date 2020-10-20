@@ -23,6 +23,7 @@ void MPU6050_init(uint8_t address)
     MPU6050_gyroscope_range(MPU6050_GYRO_FS_250);
     MPU6050_accelerometer_range(MPU6050_ACCEL_FS_2);
     MPU6050_sleep(false);
+    MPU6050_set_DLPF(0x06);
 }
 
 void MPU6050_set_clock(uint8_t source)
