@@ -99,7 +99,7 @@ void *mainThread(void *arg0)
 
 
         UARTDEBUG_printf("%f, %f, %f \n", Total_pitch , g_pitch, a_pitch);
-        // Kalman
+        // Compliment.
         //
 
         //UARTDEBUG_printf("Total_p = %f, \n", Total_pitch);
