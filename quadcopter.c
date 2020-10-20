@@ -100,7 +100,7 @@ void *mainThread(void *arg0)
 
         UARTDEBUG_printf("%f, %f, %f \n", Total_pitch , g_pitch, a_pitch);
         ///
-        /
+        //
         //UARTDEBUG_printf("Total_p = %f, \n", Total_pitch);
         //UARTDEBUG_printf("Total_p = %f,\n ", Total_pitch);
         //UARTDEBUG_printf("m_t = %f,\n ", Total_yaw);
