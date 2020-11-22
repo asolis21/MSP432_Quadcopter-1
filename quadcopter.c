@@ -65,12 +65,9 @@ void *mainThread(void *arg0)
     gyro_offset[2] /= 2000;
 
 
-
     float accel[3];
     float gyro[3];
     float mag[3];
-
-    float gyro_bias[3];
 
     float a_pitch, a_roll;
     float g_pitch, g_roll, g_yaw;
@@ -90,7 +87,6 @@ void *mainThread(void *arg0)
 
     uint32_t start;
     float dt = 0.0;
-    float dt_t = 0.0;
 
     pid_init(&roll_pid);
     pid_init(&pitch_pid);
@@ -171,7 +167,7 @@ void *mainThread(void *arg0)
         //Update Counts (PID)
         ROLL_PID  = (int32_t)pid_update(&roll_pid, Total_roll, dt);
         PITCH_PID = (int32_t)pid_update(&pitch_pid, Total_pitch, dt);
-        YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
+        YAW_PID = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
 
         /*Two Axis*/
