@@ -97,8 +97,8 @@ void *mainThread(void *arg0)
 
     ESC_speed(ESC0, 16000);
     ESC_speed(ESC1, 16000);
-    ESC_speed(ESC2, 16000);
-    ESC_speed(ESC3, 16000);
+    //ESC_speed(ESC2, 16000);
+    //ESC_speed(ESC3, 16000);
 
     while(1)
     {
@@ -163,14 +163,14 @@ void *mainThread(void *arg0)
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
         /*Single Axis*/ /*Working Drone*/
-        //ESC_speed(ESC0, 16000 - PITCH_PID);
-        //ESC_speed(ESC1, 16000 + PITCH_PID);
+        ESC_speed(ESC0, 16000 - PITCH_PID);
+        ESC_speed(ESC1, 16000 + PITCH_PID);
 
         /*Two Axis*/
-        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
-        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
-        ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);
-        ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);
+        //ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
+        //ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
+        //ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);
+        //ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);
 
         //UARTDEBUG_printf("ax = %i, ay = %i, az = %i, ", raw_accel[0], raw_accel[1], raw_accel[2]);
         //UARTDEBUG_printf("gx = %i, gy = %f, gz = %i, ", raw_gyro[0], raw_gyro[1], raw_gyro[2]);
