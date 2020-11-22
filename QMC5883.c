@@ -1,5 +1,6 @@
 #include "QMC5883.h"
 #include "EasyHal/i2c_dev.h"
+#include <math.h>
 
 void QMC5883_write_byte(uint8_t reg, uint8_t value);
 uint8_t QMC5883_read_byte(uint8_t reg);
@@ -61,12 +62,17 @@ void QMC5883_raw_magnetometer(int16_t *raw_mag)
     raw_mag[2] = ((int16_t)(raw_data[5] << 8)) | raw_data[4];
 }
 
-void QMC5883_ScaleRaw_magnetometer(float *mag, int16_t *raw_mag)
+void QMC5883_magnetometer(float *magnetometer, int32_t *offsets)
 {
-    mag[0] = (float)raw_mag[0]/3000.0f;
-    mag[1] = (float)raw_mag[1]/3000.0f;
-    mag[2] = (float)raw_mag[2]/3000.0f;
+    int16_t raw_mag[3];
+    QMC5883_raw_magnetometer(raw_mag);
+
+    //Magnetometer reading, assuming +-8G
+    magnetometer[0] = ((float)raw_mag[0])*0.0003333;
+    magnetometer[1] = ((float)raw_mag[1])*0.0003333;
+    magnetometer[2] = ((float)raw_mag[2])*0.0003333;
 }
+
 
 
 /*LOW LEVEL QMC5883 COMMUNICATION-----------------------------------------------------*/

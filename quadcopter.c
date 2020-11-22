@@ -23,10 +23,10 @@ void *mainThread(void *arg0)
 
     int16_t raw_accel[3];
     int16_t raw_gyro[3];
-    int16_t raw_mag[3];
 
     int32_t accel_offset[3] = {0, 0, 0};
     int32_t gyro_offset[3] = {0, 0, 0};
+    int32_t mag_offset[3] = {0, 0, 0};
 
     //CALIBRATE ACCELEROMETER
     uint32_t j;
@@ -36,18 +36,20 @@ void *mainThread(void *arg0)
 
         accel_offset[0] += raw_accel[0];
         accel_offset[1] += raw_accel[1];
+        raw_accel[2] -= 4096;
+
         accel_offset[2] += raw_accel[2];
 
         usleep(4000);
     }
 
-    //accel_offset[0] /= 200;
-    //accel_offset[1] /= 200;
-    //accel_offset[2] /= 200;
+    accel_offset[0] /= 200;
+    accel_offset[1] /= 200;
+    accel_offset[2] /= 200;
 
     //CALIBRATE GYROSCOPE
     uint32_t i;
-    for(i = 0; i < 1000; i++)
+    for(i = 0; i < 2000; i++)
     {
         MPU6050_raw_gyroscope(raw_gyro);
 
@@ -58,9 +60,10 @@ void *mainThread(void *arg0)
         usleep(4000);
     }
 
-    gyro_offset[0] /= 1000;
-    gyro_offset[1] /= 1000;
-    gyro_offset[2] /= 1000;
+    gyro_offset[0] /= 2000;
+    gyro_offset[1] /= 2000;
+    gyro_offset[2] /= 2000;
+
 
 
     float accel[3];
@@ -71,11 +74,11 @@ void *mainThread(void *arg0)
 
     float a_pitch, a_roll;
     float g_pitch, g_roll, g_yaw;
-    float m_yaw;
+    float m_pitch, m_roll, m_yaw;
 
-    float Total_roll;
-    float Total_pitch;
-    float Total_yaw;
+    float Total_roll = 0.0;
+    float Total_pitch = 0.0;
+    float Total_yaw = 0.0;
 
     PID_t roll_pid;
     PID_t pitch_pid;
@@ -107,13 +110,13 @@ void *mainThread(void *arg0)
         /***************ACCELEROMETER_RAW***************/
         MPU6050_raw_accelerometer(raw_accel);
 
-        //raw_accel[0] -= accel_offset[0];
-        //raw_accel[1] -= accel_offset[1];
-        //raw_accel[2] -= accel_offset[2];
+        raw_accel[0] -= accel_offset[0];
+        raw_accel[1] -= accel_offset[1];
+        raw_accel[2] -= accel_offset[2];
 
-        accel[0] = (float)raw_accel[0];
-        accel[1] = (float)raw_accel[1];
-        accel[2] = (float)raw_accel[2];
+        accel[0] = ((float)raw_accel[0])*4096;
+        accel[1] = ((float)raw_accel[1])*4096;
+        accel[2] = ((float)raw_accel[2])*4096;
 
         /****************GYROSCOPE_RAW*****************/
         MPU6050_raw_gyroscope(raw_gyro);
@@ -128,33 +131,41 @@ void *mainThread(void *arg0)
 
 
         /****************MAGNETOMETER_RAW*****************/
-        QMC5883_raw_magnetometer(raw_mag);
-        QMC5883_ScaleRaw_magnetometer(mag, raw_mag);
+        //QMC5883_raw_magnetometer(raw_mag);// Included in Following Function
+        QMC5883_magnetometer(mag, mag_offset);
+
 
         /****************ACCELEROMETER_ANGLES*****************/
         a_roll = atan2f(accel[0], sqrt(accel[1]*accel[1] + accel[2]*accel[2])) * (180.0f/M_PI);
         a_pitch =  atan2f(accel[1], sqrt(accel[0]*accel[0] + accel[2]*accel[2])) * (180.0f/M_PI);
-        //a_roll = atan2f(accel[0], accel[2]) * (180.0f/M_PI); // gymbolock
-        //a_pitch =  atan2f(accel[1], accel[2]) * (180.0f/M_PI);
 
-        /****************GYROSCOPE_ANGLES*****************/
+
+        /****************GYROSCOPE_ANGLES*****************/////g_pitch = mag[0], g_roll= mag[1], g_yaw= mag[2]
         g_pitch += gyro[0];
         g_roll += gyro[1];
         g_yaw += gyro[2];
 
 
-        /****************MAGNETOMETER_ANGLES*****************/
-        //Compute Yaw Angles
-        //m_yaw = atan2f(mag[1], mag[0]) * (180.0f/M_PI);
-        //m_yaw = (m_yaw > 360.0f) ? (m_yaw - 360.0f) : m_yaw;
-        //m_yaw = (m_yaw < 0) ? (m_yaw + 360.0f) : m_yaw;
+        /****************MAGNETOMETER_ANGLES*****************///m_pitch = mag[0], m_roll= mag[1], m_yaw= mag[2]
+        m_pitch = -(mag[0])*57.2957;
+        m_roll  = -(mag[1])*57.2957;
+
+        float hx = mag[0]*cos(m_pitch) + mag[1]*sin(m_roll)*sin(m_pitch) - mag[2]*cos(m_roll)*sin(m_pitch);
+        float hy = mag[1]*cos(m_roll) + mag[2]*sin(m_roll);
+
+        float heading = atan2(hy, hx)*57.2957;
+
+        if(hy < 0) heading = 180 + (180 + atan2(hy, hx)*57.2957);
+        else       heading = atan2(hy, hx)*57.2957;
+
+        m_yaw = heading;
 
 
-        /********DATA FUSION**********/
+        /*******************DATA FUSION**********************/
         //Complementary Filter
-        Total_roll  = 0.99*(g_roll) + 0.01*(a_roll);
-        Total_pitch = 0.99*(g_pitch) + 0.01*(a_pitch);
-        Total_yaw   = 0.99*(g_yaw) + 0.01*(g_yaw);
+        Total_roll  = 0.98*(g_roll) + 0.02*(a_roll);
+        Total_pitch = 0.98*(g_pitch) + 0.02*(a_pitch);
+        Total_yaw   = 0.98*(m_yaw) + 0.02*(g_yaw);
 
 
         //Update Counts (PID)
@@ -162,9 +173,6 @@ void *mainThread(void *arg0)
         PITCH_PID = (int32_t)pid_update(&pitch_pid, Total_pitch, dt);
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
-        /*Single Axis*/ /*Working Drone*/
-        //ESC_speed(ESC0, 16000 - PITCH_PID);
-        //ESC_speed(ESC1, 16000 + PITCH_PID);
 
         /*Two Axis*/
         ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
@@ -175,13 +183,12 @@ void *mainThread(void *arg0)
         //UARTDEBUG_printf("ax = %i, ay = %i, az = %i, ", raw_accel[0], raw_accel[1], raw_accel[2]);
         //UARTDEBUG_printf("gx = %i, gy = %f, gz = %i, ", raw_gyro[0], raw_gyro[1], raw_gyro[2]);
         //UARTDEBUG_printf("mx = %i, my = %i, mz = %i, dt = %f\r\n", raw_mag[0], raw_mag[1], raw_mag[2], dt);
-        //float pid_pitch = (float)PITCH_PID;
 
 
         UARTDEBUG_printf("%f, %f \n", Total_pitch, g_pitch);
 
 
-        dt = (millis() - start)/1e3;// Working
+        dt = (millis() - start)/1e3;
 
     }
 }
