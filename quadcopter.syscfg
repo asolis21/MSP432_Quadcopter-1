@@ -10,6 +10,8 @@
  */
 const DriverLib = scripting.addModule("/ti/devices/DriverLib");
 const Board     = scripting.addModule("/ti/drivers/Board");
+const Capture   = scripting.addModule("/ti/drivers/Capture", {}, false);
+const Capture1  = Capture.addInstance();
 const I2C       = scripting.addModule("/ti/drivers/I2C");
 const I2C1      = I2C.addInstance();
 const PWM       = scripting.addModule("/ti/drivers/PWM", {}, false);
@@ -30,6 +32,11 @@ const Button1   = Button.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
+Capture1.$name                    = "CONFIG_CAPTURE_0";
+Capture1.timer.$name              = "MyTIMER_A1";
+Capture1.timer.$assign            = "Timer_A2";
+Capture1.timer.capturePin.$assign = "boosterpack.35";
+
 I2C1.$name              = "CONFIG_I2C_0";
 I2C1.i2c.$name          = "MyI2C1";
 I2C1.i2c.$assign        = "EUSCI_B0";

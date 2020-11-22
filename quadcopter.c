@@ -15,7 +15,7 @@ void *mainThread(void *arg0)
     UARTDEBUG_init(9600);
     MPU6050_init(MPU6050_DEFAULT_ADDRESS);
     QMC5883_init();
-
+    PPM_init();
     ESC_init();
     //ESC_calibrate();
     ESC_arm();
@@ -80,6 +80,7 @@ void *mainThread(void *arg0)
     PID_t roll_pid;
     PID_t pitch_pid;
     PID_t yaw_pid;
+    PID_t channel_0;
 
     int32_t ROLL_PID;
     int32_t PITCH_PID;
@@ -100,9 +101,14 @@ void *mainThread(void *arg0)
     ESC_speed(ESC2, 16000);
     ESC_speed(ESC3, 16000);
 
+    //RC data
+    uint32_t channels[8];
+
     while(1)
     {
         start = millis();
+        PPM_channel(channels);
+        setPointUpdate(&channel_0, channels);
 
         /***************ACCELEROMETER_RAW***************/
         MPU6050_raw_accelerometer(raw_accel);
