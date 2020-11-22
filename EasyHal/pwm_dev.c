@@ -34,9 +34,11 @@ void pwm_dev_init(uint32_t index)
     //Default duty = 0%
     PWM_Params params;
     PWM_Params_init(&params);
-    params.dutyValue = 0;
+    params.dutyValue = 12000;
+    params.dutyUnits = PWM_DUTY_COUNTS;
     params.periodUnits = PWM_PERIOD_COUNTS;
-    params.periodValue = 12000;
+    params.periodValue = 240000;
+    //params.idleLevel = PWM_IDLE_LOW;
 
     pwm_handles[index] = PWM_open(pwm_configs[index], &params);
     if(pwm_handles[index] == NULL)

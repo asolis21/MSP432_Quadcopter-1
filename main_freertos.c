@@ -52,6 +52,7 @@
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/Timer.h>
+#include <ti/drivers/GPIO.h>
 
 extern void *mainThread(void *arg0);
 
@@ -78,6 +79,7 @@ int main(void)
     UART_init();
     I2C_init();
     PWM_init();
+    GPIO_init();
     Timer_init();
 
     /* Initialize the attributes structure with default values */

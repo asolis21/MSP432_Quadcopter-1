@@ -6,16 +6,15 @@ void pid_init(PID_t *pid)
     pid->command = 0.0;
     pid->prevCommand =0.0;
     pid->integral_max = 0.0;
-    pid->setPoint = 0.0;
+    pid->setPoint = 0.0;// CHANGE BACK TO 0.0 AFTER TESTING
     pid->prevError = 0.0;
-    pid->throttle = 15500;
-    pid->max = 2000;
-    pid->min = -1000;
+    pid->max = 2000;//2000
+    pid->min = -2000;//-2000
     pid->integral_max = 600;
     pid->integral_min = -600;
-    pid->coefficients[KP] = 15; //10;
-    pid->coefficients[KI] = 1; //0.1;
-    pid->coefficients[KD] = 1.1;//2.8;
+    pid->coefficients[KP] = 30; //25*; Decrease from 40; when constant oscillations use Zeiger Nichols to find I and D
+    pid->coefficients[KI] = 15; //0.1; TU = 1S, TI= TU/2= .5 KI=30*.5
+    pid->coefficients[KD] = 20; //2.8;//30, 15, 15 works for single axis //2 Axis: 30,15,20
 
 }
 

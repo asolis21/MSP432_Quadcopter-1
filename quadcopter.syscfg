@@ -24,6 +24,8 @@ const Timer1    = Timer.addInstance();
 const UART      = scripting.addModule("/ti/drivers/UART");
 const UART1     = UART.addInstance();
 const UART2     = UART.addInstance();
+const Button    = scripting.addModule("/ti/drivers/apps/Button", {}, false);
+const Button1   = Button.addInstance();
 
 /**
  * Write custom configuration values to the imported modules.
@@ -37,7 +39,7 @@ I2C1.i2c.sclPin.$assign = "boosterpack.14";
 PWM1.$name                = "CONFIG_PWM_0";
 PWM1.timer.$name          = "MyTIMER_A1";
 PWM1.timer.$assign        = "Timer_A0";
-PWM1.timer.pwmPin.$assign = "boosterpack.38";
+PWM1.timer.pwmPin.$assign = "boosterpack.39";
 
 PWM2.$name                = "CONFIG_PWM_1";
 PWM2.timer.$name          = "MyTIMER_A1";
@@ -47,12 +49,12 @@ PWM2.timer.pwmPin.$assign = "boosterpack.19";
 PWM3.$name                = "CONFIG_PWM_2";
 PWM3.timer.$name          = "MyTIMER_A1";
 PWM3.timer.$assign        = "Timer_A0";
-PWM3.timer.pwmPin.$assign = "boosterpack.39";
+PWM3.timer.pwmPin.$assign = "boosterpack.38";
 
 PWM4.$name                = "CONFIG_PWM_3";
 PWM4.timer.$name          = "MyTIMER_A1";
 PWM4.timer.$assign        = "Timer_A0";
-PWM4.timer.pwmPin.$assign = "boosterpack.40";
+PWM4.timer.pwmPin.$assign = "boosterpack.34";
 
 Power.performanceLevel3.$name = "ti_drivers_power_PowerMSP432PerfLevels0";
 Power.performanceLevel2.$name = "ti_drivers_power_PowerMSP432PerfLevels1";
@@ -78,11 +80,16 @@ UART2.uart.$assign       = "EUSCI_A2";
 UART2.uart.txPin.$assign = "boosterpack.4";
 UART2.uart.rxPin.$assign = "boosterpack.3";
 
+Button1.$name         = "CONFIG_BUTTON_0";
+Button1.$hardware     = system.deviceData.board.components.S2;
+Button1.gpioPin.$name = "CONFIG_GPIO_0";
+
 /**
  * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-UART1.uart.$suggestSolution       = "EUSCI_A0";
-UART1.uart.txPin.$suggestSolution = "7";
-UART1.uart.rxPin.$suggestSolution = "6";
+UART1.uart.$suggestSolution              = "EUSCI_A0";
+UART1.uart.txPin.$suggestSolution        = "7";
+UART1.uart.rxPin.$suggestSolution        = "6";
+Button1.gpioPin.gpioPin.$suggestSolution = "8";
