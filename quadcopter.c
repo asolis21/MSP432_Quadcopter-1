@@ -4,6 +4,7 @@
 #include "UARTDEBUG.h"
 #include <math.h>
 #include "PID.h"
+#include "RC.h"
 
 #include "EasyHal/time_dev.h"
 #include "ti_drivers_config.h"
@@ -11,14 +12,13 @@
 void *mainThread(void *arg0)
 {
     time_dev_init();
-
     UARTDEBUG_init(9600);
     MPU6050_init(MPU6050_DEFAULT_ADDRESS);
     QMC5883_init();
-    PPM_init();
     ESC_init();
     //ESC_calibrate();
     ESC_arm();
+    PPM_init();
 
 
     int16_t raw_accel[3];
@@ -27,6 +27,9 @@ void *mainThread(void *arg0)
 
     int32_t accel_offset[3] = {0, 0, 0};
     int32_t gyro_offset[3] = {0, 0, 0};
+
+    //RC data
+    uint32_t channels[8];
 
     //CALIBRATE ACCELEROMETER
     uint32_t j;
@@ -67,8 +70,6 @@ void *mainThread(void *arg0)
     float gyro[3];
     float mag[3];
 
-    float gyro_bias[3];
-
     float a_pitch, a_roll;
     float g_pitch, g_roll, g_yaw;
     float m_yaw;
@@ -93,21 +94,19 @@ void *mainThread(void *arg0)
     pid_init(&roll_pid);
     pid_init(&pitch_pid);
     pid_init(&yaw_pid);
+    pid_init(&channel_0);
 
-    //while(GPIO_read(CONFIG_GPIO_0) == 0);
 
     ESC_speed(ESC0, 16000);
     ESC_speed(ESC1, 16000);
-    ESC_speed(ESC2, 16000);
-    ESC_speed(ESC3, 16000);
-
-    //RC data
-    uint32_t channels[8];
+    //ESC_speed(ESC2, 16000);
+    //ESC_speed(ESC3, 16000);
 
     while(1)
     {
         start = millis();
-        PPM_channel(channels);
+
+        PPM_channels(channels);
         setPointUpdate(&channel_0, channels);
 
         /***************ACCELEROMETER_RAW***************/
