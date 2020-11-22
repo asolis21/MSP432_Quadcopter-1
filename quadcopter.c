@@ -181,7 +181,7 @@ void *mainThread(void *arg0)
         UARTDEBUG_printf("%f, %f \n", Total_pitch, g_pitch);
 
 
-        dt = (millis() - start)/1e3;
+        dt = (millis() - start)/1e3;// Working
 
     }
 }
