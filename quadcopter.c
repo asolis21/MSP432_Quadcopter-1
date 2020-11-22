@@ -114,9 +114,9 @@ void *mainThread(void *arg0)
         raw_accel[1] -= accel_offset[1];
         raw_accel[2] -= accel_offset[2];
 
-        accel[0] = ((float)raw_accel[0])*4096;
-        accel[1] = ((float)raw_accel[1])*4096;
-        accel[2] = ((float)raw_accel[2])*4096;
+        accel[0] = ((float)raw_accel[0])/4096;
+        accel[1] = ((float)raw_accel[1])/4096;
+        accel[2] = ((float)raw_accel[2])/4096;
 
         /****************GYROSCOPE_RAW*****************/
         MPU6050_raw_gyroscope(raw_gyro);
@@ -147,8 +147,8 @@ void *mainThread(void *arg0)
 
 
         /****************MAGNETOMETER_ANGLES*****************///m_pitch = mag[0], m_roll= mag[1], m_yaw= mag[2]
-        m_pitch = -(mag[0])*57.2957;
-        m_roll  = -(mag[1])*57.2957;
+        m_pitch = -(mag[0])/57.2957;
+        m_roll  = -(mag[1])/57.2957;
 
         float hx = mag[0]*cos(m_pitch) + mag[1]*sin(m_roll)*sin(m_pitch) - mag[2]*cos(m_roll)*sin(m_pitch);
         float hy = mag[1]*cos(m_roll) + mag[2]*sin(m_roll);
