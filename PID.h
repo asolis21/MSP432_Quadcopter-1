@@ -44,6 +44,7 @@ void pid_set_coefficients(PID_t *pid, float *coefficients);
 void pid_maxmin_command(PID_t *pid, float max, float min);
 void pid_maxmin_integral(PID_t *pid, float max, float min);
 void setThrottle(PID_t * pid, float throttle);
+void setPointUpdate(PID_t *channel0, const uint32_t channel0Value[]);
 
 
 #endif /* PID_H_ */
