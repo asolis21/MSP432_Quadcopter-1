@@ -14,7 +14,7 @@ void pid_init(PID_t *pid)
     pid->integral_min = -600;
     pid->coefficients[KP] = 30; //25*; Decrease from 40; when constant oscillations use Zeiger Nichols to find I and D
     pid->coefficients[KI] = 15; //0.1; TU = 1S, TI= TU/2= .5 KI=30*.5
-    pid->coefficients[KD] = 20; //2.8;//30, 15, 15 works for single axis //2 Axis: 30,15,20
+    pid->coefficients[KD] = 15; //2.8;//30, 15, 15 works for single axis //2 Axis: 30,15,20
 
 }
 
