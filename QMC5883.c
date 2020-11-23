@@ -81,7 +81,7 @@ void QMC5883_magnetometer(float *magnetometer, int32_t *offsets)
 
 
 
-/*LOW LEVEL QMC5883 COMMUNICATION-----------------------------------------------------*/
+/*LOW LEVEL QMC5883 COMMUNICATION----------------------------------------------------*/
 
 void QMC5883_write_byte(uint8_t reg, uint8_t value)
 {
