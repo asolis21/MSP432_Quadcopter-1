@@ -6,7 +6,7 @@ void pid_init(PID_t *pid)
     pid->command = 0.0;
     pid->prevCommand =0.0;
     pid->integral_max = 0.0;
-    pid->setPoint = 0.0;// CHANGE BACK TO 0.0 AFTER TESTING
+    pid->setPoint = 10;// CHANGE BACK TO 0.0 AFTER TESTING
     pid->prevError = 0.0;
     pid->max = 2000;//2000
     pid->min = -2000;//-2000

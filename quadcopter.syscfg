@@ -34,7 +34,8 @@ const Button1   = Button.addInstance();
  */
 Capture1.$name                    = "CONFIG_CAPTURE_0";
 Capture1.timer.$name              = "MyTIMER_A1";
-Capture1.timer.capturePin.$assign = "boosterpack.35";
+Capture1.timer.$assign            = "Timer_A2";
+Capture1.timer.capturePin.$assign = "boosterpack.37";
 
 I2C1.$name              = "CONFIG_I2C_0";
 I2C1.i2c.$name          = "MyI2C1";
@@ -95,7 +96,6 @@ Button1.gpioPin.$name = "CONFIG_GPIO_0";
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-Capture1.timer.$suggestSolution          = "Timer_A2";
 UART1.uart.$suggestSolution              = "EUSCI_A0";
 UART1.uart.txPin.$suggestSolution        = "7";
 UART1.uart.rxPin.$suggestSolution        = "6";
