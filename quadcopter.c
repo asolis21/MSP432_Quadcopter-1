@@ -23,7 +23,6 @@ void *mainThread(void *arg0)
 
     int16_t raw_accel[3];
     int16_t raw_gyro[3];
-    int16_t raw_mag[3];
 
     int32_t accel_offset[3] = {0, 0, 0};
     int32_t gyro_offset[3] = {0, 0, 0};
