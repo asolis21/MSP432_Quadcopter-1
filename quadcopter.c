@@ -107,7 +107,7 @@ void *mainThread(void *arg0)
         start = millis();
 
         PPM_channels(channels);
-        setPointUpdate(&channel_0, channels);
+        //setPointUpdate(&channel_0, channels);
 
         /***************ACCELEROMETER_RAW***************/
         MPU6050_raw_accelerometer(raw_accel);
@@ -168,22 +168,18 @@ void *mainThread(void *arg0)
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
         /*Single Axis*/ /*Working Drone*/
-        //ESC_speed(ESC0, 16000 - PITCH_PID);
-        //ESC_speed(ESC1, 16000 + PITCH_PID);
+        //float Pitch_throttle = 100*channels[1];
+        ESC_speed(ESC0, 16000 - PITCH_PID + channels[2]);
+        ESC_speed(ESC1, 16000 + PITCH_PID);
 
         /*Two Axis*/
-        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
-        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
+        //ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
+        //ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
         //ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);
         //ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);
 
-        //UARTDEBUG_printf("ax = %i, ay = %i, az = %i, ", raw_accel[0], raw_accel[1], raw_accel[2]);
-        //UARTDEBUG_printf("gx = %i, gy = %f, gz = %i, ", raw_gyro[0], raw_gyro[1], raw_gyro[2]);
-        //UARTDEBUG_printf("mx = %i, my = %i, mz = %i, dt = %f\r\n", raw_mag[0], raw_mag[1], raw_mag[2], dt);
-        //float pid_pitch = (float)PITCH_PID;
 
-
-        UARTDEBUG_printf("%f, %f \n", Total_pitch, g_pitch);
+        UARTDEBUG_printf("CH0 = %i    CH1 = %i CH2 = %i \n",channels[1], channels[2], channels[3]);
 
 
         dt = (millis() - start)/1e3;

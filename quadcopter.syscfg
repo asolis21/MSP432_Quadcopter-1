@@ -35,7 +35,7 @@ const Button1   = Button.addInstance();
 Capture1.$name                    = "CONFIG_CAPTURE_0";
 Capture1.timer.$name              = "MyTIMER_A1";
 Capture1.timer.$assign            = "Timer_A2";
-Capture1.timer.capturePin.$assign = "boosterpack.37";
+Capture1.timer.capturePin.$assign = "boosterpack.35";
 
 I2C1.$name              = "CONFIG_I2C_0";
 I2C1.i2c.$name          = "MyI2C1";
