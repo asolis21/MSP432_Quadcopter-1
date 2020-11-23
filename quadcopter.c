@@ -27,6 +27,7 @@ void *mainThread(void *arg0)
 
     int32_t accel_offset[3] = {0, 0, 0};
     int32_t gyro_offset[3] = {0, 0, 0};
+    int32_t mag_offset[3] = {0, 0, 0};
 
     //RC data
     uint32_t channels[8];
@@ -72,16 +73,16 @@ void *mainThread(void *arg0)
 
     float a_pitch, a_roll;
     float g_pitch, g_roll, g_yaw;
-    float m_yaw;
+    float m_pitch, m_roll, m_yaw;
 
-    float Total_roll;
-    float Total_pitch;
-    float Total_yaw;
+    float Total_roll = 0.0;
+    float Total_pitch = 0.0;
+    float Total_yaw = 0.0;
 
     PID_t roll_pid;
     PID_t pitch_pid;
     PID_t yaw_pid;
-    PID_t channel_0;
+    //PID_t channel_0;
 
     int32_t ROLL_PID;
     int32_t PITCH_PID;
@@ -89,18 +90,17 @@ void *mainThread(void *arg0)
 
     uint32_t start;
     float dt = 0.0;
-    float dt_t = 0.0;
 
     pid_init(&roll_pid);
     pid_init(&pitch_pid);
     pid_init(&yaw_pid);
-    pid_init(&channel_0);
+    //pid_init(&channel_0);
 
 
     ESC_speed(ESC0, 16000);
     ESC_speed(ESC1, 16000);
-    //ESC_speed(ESC2, 16000);
-    //ESC_speed(ESC3, 16000);
+    ESC_speed(ESC2, 16000);
+    ESC_speed(ESC3, 16000);
 
     while(1)
     {
@@ -133,51 +133,56 @@ void *mainThread(void *arg0)
 
 
         /****************MAGNETOMETER_RAW*****************/
-        QMC5883_raw_magnetometer(raw_mag);
-        QMC5883_ScaleRaw_magnetometer(mag, raw_mag);
+        //QMC5883_raw_magnetometer(raw_mag);
+        QMC5883_magnetometer(mag, mag_offset);
 
         /****************ACCELEROMETER_ANGLES*****************/
         a_roll = atan2f(accel[0], sqrt(accel[1]*accel[1] + accel[2]*accel[2])) * (180.0f/M_PI);
         a_pitch =  atan2f(accel[1], sqrt(accel[0]*accel[0] + accel[2]*accel[2])) * (180.0f/M_PI);
-        //a_roll = atan2f(accel[0], accel[2]) * (180.0f/M_PI); // gymbolock
-        //a_pitch =  atan2f(accel[1], accel[2]) * (180.0f/M_PI);
 
         /****************GYROSCOPE_ANGLES*****************/
         g_pitch += gyro[0];
         g_roll += gyro[1];
         g_yaw += gyro[2];
 
+        /****************MAGNETOMETER_ANGLES*****************///m_pitch = mag[0], m_roll= mag[1], m_yaw= mag[2]
+        m_pitch = -(mag[0])/57.2957;
+        m_roll  = -(mag[1])/57.2957;
 
-        /****************MAGNETOMETER_ANGLES*****************/
-        //Compute Yaw Angles
-        //m_yaw = atan2f(mag[1], mag[0]) * (180.0f/M_PI);
-        //m_yaw = (m_yaw > 360.0f) ? (m_yaw - 360.0f) : m_yaw;
-        //m_yaw = (m_yaw < 0) ? (m_yaw + 360.0f) : m_yaw;
+        float hx = mag[0]*cos(m_pitch) + mag[1]*sin(m_roll)*sin(m_pitch) - mag[2]*cos(m_roll)*sin(m_pitch);
+        float hy = mag[1]*cos(m_roll) + mag[2]*sin(m_roll);
 
+        float heading = atan2(hy, hx)*57.2957;
+
+        if(hy < 0) heading = 180 + (180 + atan2(hy, hx)*57.2957);
+        else       heading = atan2(hy, hx)*57.2957;
+
+        m_yaw = heading;
 
         /********DATA FUSION**********/
         //Complementary Filter
         Total_roll  = 0.99*(g_roll) + 0.01*(a_roll);
         Total_pitch = 0.99*(g_pitch) + 0.01*(a_pitch);
-        Total_yaw   = 0.99*(g_yaw) + 0.01*(g_yaw);
-
+        Total_yaw   = 0.98*(m_yaw) + 0.02*(g_yaw);
 
         //Update Counts (PID)
         ROLL_PID  = (int32_t)pid_update(&roll_pid, Total_roll, dt);
         PITCH_PID = (int32_t)pid_update(&pitch_pid, Total_pitch, dt);
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
-        /*Single Axis*/ /*Working Drone with RC */
-        ESC_speed(ESC0, 16000 - PITCH_PID + channels[2] - 1488);
-        ESC_speed(ESC1, 16000 + PITCH_PID);
+        /*Two Axis*/
+        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
+        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
+        ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);
+        ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);
 
         //Kill switch
         if(channels[6] < 1500)
         {
         ESC_speed(ESC0, 0);
         ESC_speed(ESC1, 0);
-        //ESC_speed(ESC2, 0);
-        //ESC_speed(ESC3, 0);
+        ESC_speed(ESC2, 0);
+        ESC_speed(ESC3, 0);
         }
 
         UARTDEBUG_printf("CH0 = %i    CH1 = %i CH2 = %i \n",channels[1], channels[2], channels[3]);

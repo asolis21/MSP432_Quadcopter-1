@@ -18,10 +18,11 @@ void pid_init(PID_t *pid)
 
 }
 
-void setPointUpdate(PID_t *channel0, const uint32_t channel0Value[])
+/*void setPointUpdate(PID_t *channel0, const uint32_t channel0Value[])
 {
             channel0->setPoint = (3/50)*channel0Value[2] - 90;
 }
+*/
 
 float pid_update(PID_t *pid, float actual_angle, float dt)
 {
