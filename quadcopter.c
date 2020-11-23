@@ -167,7 +167,7 @@ void *mainThread(void *arg0)
         PITCH_PID = (int32_t)pid_update(&pitch_pid, Total_pitch, dt);
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
-        /*Single Axis*/ /*Working Drone with RC*/
+        /*Single Axis*/ /*Working Drone with RC */
         ESC_speed(ESC0, 16000 - PITCH_PID + channels[2] - 1488);
         ESC_speed(ESC1, 16000 + PITCH_PID);
 
