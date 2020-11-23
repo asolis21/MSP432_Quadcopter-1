@@ -168,15 +168,17 @@ void *mainThread(void *arg0)
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
         /*Single Axis*/ /*Working Drone with RC*/
-        ESC_speed(ESC0, 16000 - PITCH_PID + channels[2]);
+        ESC_speed(ESC0, 16000 - PITCH_PID + channels[2] - 1488);
         ESC_speed(ESC1, 16000 + PITCH_PID);
 
-        /*Two Axis*/
-        //ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
-        //ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
-        //ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);
-        //ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);
-
+        //Kill switch
+        if(channels[6] < 1500)
+        {
+        ESC_speed(ESC0, 0);
+        ESC_speed(ESC1, 0);
+        //ESC_speed(ESC2, 0);
+        //ESC_speed(ESC3, 0);
+        }
 
         UARTDEBUG_printf("CH0 = %i    CH1 = %i CH2 = %i \n",channels[1], channels[2], channels[3]);
 

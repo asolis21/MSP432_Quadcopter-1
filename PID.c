@@ -6,7 +6,7 @@ void pid_init(PID_t *pid)
     pid->command = 0.0;
     pid->prevCommand =0.0;
     pid->integral_max = 0.0;
-    pid->setPoint = 10;// CHANGE BACK TO 0.0 AFTER TESTING
+    pid->setPoint = 0;// CHANGE BACK TO 0.0 AFTER TESTING
     pid->prevError = 0.0;
     pid->max = 2000;//2000
     pid->min = -2000;//-2000
@@ -20,7 +20,7 @@ void pid_init(PID_t *pid)
 
 void setPointUpdate(PID_t *channel0, const uint32_t channel0Value[])
 {
-            channel0->setPoint = (3/50)*channel0Value[1] - 90;
+            channel0->setPoint = (3/50)*channel0Value[2] - 90;
 }
 
 float pid_update(PID_t *pid, float actual_angle, float dt)
