@@ -162,7 +162,7 @@ void *mainThread(void *arg0)
         //Complementary Filter
         Total_roll  = 0.99*(g_roll) + 0.01*(a_roll);
         Total_pitch = 0.99*(g_pitch) + 0.01*(a_pitch);
-        Total_yaw   = 0.98*(m_yaw) + 0.02*(g_yaw);// Switch Mag back after Testing
+        Total_yaw   = 0.98*(g_yaw) + 0.02*(g_yaw);// Switch Mag back after Testing
 
         //Update Counts (PID)
         ROLL_PID  = (int32_t)pid_update(&roll_pid, Total_roll, dt);
@@ -170,10 +170,10 @@ void *mainThread(void *arg0)
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
         /*Two Axis*/
-        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID);
-        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);
-        ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);
-        ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);
+        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID + YAW_PID); //Yaw: if we turn Drone Clockwise; motor
+        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID - YAW_PID);
+        ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID + YAW_PID);
+        ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID - YAW_PID);
 
         //Kill switch
         if(channels[6] < 1500)
@@ -184,7 +184,7 @@ void *mainThread(void *arg0)
         ESC_speed(ESC3, 0);
         }
 
-        UARTDEBUG_printf("CH0 = %i  CH1 = %i CH2 = %i \n",channels[1], channels[2], channels[3]);
+        UARTDEBUG_printf("Roll = %f   Pitch = %f   Yaw = %f\n", Total_roll, Total_pitch, Total_yaw);
 
 
         dt = (millis() - start)/1e3;

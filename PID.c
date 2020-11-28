@@ -8,8 +8,8 @@ void pid_init(PID_t *pid)
     pid->integral_max = 0.0;
     pid->setPoint = 0;// CHANGE BACK TO 0.0 AFTER TESTING
     pid->prevError = 0.0;
-    pid->max = 2000;//2000
-    pid->min = -2000;//-2000
+    pid->max = 4000;//2000
+    pid->min = -4000;//-2000
     pid->integral_max = 600;
     pid->integral_min = -600;
     pid->coefficients[KP] = 30; //25*; Decrease from 40; when constant oscillations use Zeiger Nichols to find I and D
