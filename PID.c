@@ -8,13 +8,13 @@ void pid_init(PID_t *pid)
     pid->integral_max = 0.0;
     pid->setPoint = 0;// CHANGE BACK TO 0.0 AFTER TESTING
     pid->prevError = 0.0;
-    pid->max = 4000;//2000
-    pid->min = -4000;//-2000
+    pid->max = 2000;//2000
+    pid->min = -2000;//-2000
     pid->integral_max = 600;
     pid->integral_min = -600;
-    pid->coefficients[KP] = 30; //25*; Decrease from 40; when constant oscillations use Zeiger Nichols to find I and D
-    pid->coefficients[KI] = 15; //0.1; TU = 1S, TI= TU/2= .5 KI=30*.5
-    pid->coefficients[KD] = 15; //2.8;//30, 15, 15 works for single axis //2 Axis: 30,15,20
+    pid->coefficients[KP] = 40; //25*; Decrease from 40; when constant oscillations use Zeiger Nichols to find I and D
+    pid->coefficients[KI] = 5.8; //0.1; TU = 1S, TI= TU/2= .5 KI=30*.5
+    pid->coefficients[KD] = 12; //2.8;//30, 15, 15 works for single axis //2 Axis: 30,15,20 ///10
 
 }
 

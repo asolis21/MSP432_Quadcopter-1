@@ -50,7 +50,7 @@ void *mainThread(void *arg0)
 
     //CALIBRATE GYROSCOPE
     uint32_t i;
-    for(i = 0; i < 1000; i++)
+    for(i = 0; i < 2000; i++)
     {
         MPU6050_raw_gyroscope(raw_gyro);
 
@@ -61,9 +61,9 @@ void *mainThread(void *arg0)
         usleep(4000);
     }
 
-    gyro_offset[0] /= 1000;
-    gyro_offset[1] /= 1000;
-    gyro_offset[2] /= 1000;
+    gyro_offset[0] /= 2000;
+    gyro_offset[1] /= 2000;
+    gyro_offset[2] /= 2000;
 
 
     float accel[3];
@@ -145,7 +145,7 @@ void *mainThread(void *arg0)
         g_yaw += gyro[2];
 
         /****************MAGNETOMETER_ANGLES*****************///m_pitch = mag[0], m_roll= mag[1], m_yaw= mag[2]
-        m_pitch = -(mag[0])/57.2957;
+        /*m_pitch = -(mag[0])/57.2957;
         m_roll  = -(mag[1])/57.2957;
 
         float hx = mag[0]*cos(m_pitch) + mag[1]*sin(m_roll)*sin(m_pitch) - mag[2]*cos(m_roll)*sin(m_pitch);
@@ -157,7 +157,7 @@ void *mainThread(void *arg0)
         else       heading = atan2(hy, hx)*57.2957;
 
         m_yaw = heading;
-
+        */
         /********DATA FUSION**********/
         //Complementary Filter
         Total_roll  = 0.99*(g_roll) + 0.01*(a_roll);
@@ -170,12 +170,13 @@ void *mainThread(void *arg0)
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
         /*Two Axis*/
-        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID + YAW_PID); //Yaw: if we turn Drone Clockwise; motor
-        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID - YAW_PID);
-        ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID + YAW_PID);
-        ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID - YAW_PID);
+        ESC_speed(ESC0, 16000 + PITCH_PID - ROLL_PID); //+Yaw: if we turn Drone Clockwise; motor
+        ESC_speed(ESC1, 16000 - PITCH_PID - ROLL_PID);//-yaw
+        ESC_speed(ESC2, 16000 + PITCH_PID + ROLL_PID);//+yaw
+        ESC_speed(ESC3, 16000 - PITCH_PID + ROLL_PID);//-yaw
 
         //Kill switch
+        /*
         if(channels[6] < 1500)
         {
         ESC_speed(ESC0, 0);
@@ -183,6 +184,7 @@ void *mainThread(void *arg0)
         ESC_speed(ESC2, 0);
         ESC_speed(ESC3, 0);
         }
+        */
 
         UARTDEBUG_printf("Roll = %f   Pitch = %f   Yaw = %f\n", Total_roll, Total_pitch, Total_yaw);
 
