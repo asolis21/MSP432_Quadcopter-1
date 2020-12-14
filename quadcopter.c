@@ -168,7 +168,7 @@ void *mainThread(void *arg0)
         YAW_PID   = (int32_t)pid_update(&yaw_pid, Total_yaw, dt);
 
         /*Single Axis*/ /*Working Drone with RC */
-        ESC_speed(ESC0, 16000 - PITCH_PID + channels[2] - 1488);
+        ESC_speed(ESC0, 16000 - PITCH_PID + channels[2] - 1488);//Subtracting the Middle Position Data given from the Left Joy Stick// Allows for there no to be an offset to 1 motor
         ESC_speed(ESC1, 16000 + PITCH_PID);
 
         //Kill switch
